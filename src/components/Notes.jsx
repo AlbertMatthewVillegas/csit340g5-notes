@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import NoteCard from "./NoteCard"
 
 const startingNotes = [
@@ -36,9 +36,12 @@ function Notes() {
     return () => clearTimeout(id)
   }, [newNote])
 
-  const filteredNotes = notes.filter((note) =>
-    note.title.toLowerCase().includes(search.toLowerCase())
-  )
+  const visibleNotes = useMemo(() => {
+    console.log("filtering")
+    return notes.filter((note) =>
+      note.title.toLowerCase().includes(search.toLowerCase())
+    )
+  }, [notes, search])
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -117,7 +120,7 @@ function Notes() {
         <h2 className="mb-6 text-3xl">All notes</h2>
       
         <ul className="grid grid-cols-3 items-start gap-5">
-          {filteredNotes.map((note) => (
+          {visibleNotes.map((note) => (
             <li
               key={note.id}
               className="relative min-h-32 bg-white px-6 py-5 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)]"
@@ -133,7 +136,7 @@ function Notes() {
             </li>
           ))}
         </ul>
-        {filteredNotes.length === 0 && (
+        {visibleNotes.length === 0 && (
           <p className="text-lg text-[#949494]">No notes found</p>
         )}
       </section>
