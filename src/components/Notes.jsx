@@ -19,7 +19,12 @@ function Notes() {
     const saved = localStorage.getItem("notes")
     return saved ? JSON.parse(saved) : startingNotes
   })
-  const [newNote, setNewNote] = useState({ title: "", body: "" })
+  const [newNote, setNewNote] = useState(() => {
+    const savedDraft = localStorage.getItem("draft")
+    return savedDraft
+      ? JSON.parse(savedDraft)
+      : { title: "", body: "" }
+  })
   const [search, setSearch] = useState("")
   const titleRef = useRef(null)
 
@@ -63,6 +68,7 @@ function Notes() {
       { id: Date.now(), title, body },
     ])
     setNewNote({ title: "", body: "" })
+    localStorage.removeItem("draft")
     titleRef.current.focus()
   }
 
